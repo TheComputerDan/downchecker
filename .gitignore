@@ -1,1 +1,13 @@
+# VS Code
 .vscode
+
+# Python
+__pycache__
+venv/
+*.pyc
+
+# Development Dotfiles
+.pydev
+
+# Yaml Configs
+sites.yml

@@ -1,7 +1,7 @@
 import setuptools
 from setuptools import version
 
-with open("README.md","r") as fh:
+with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
@@ -10,10 +10,11 @@ setuptools.setup(
     author="",
     description="",
     long_description=long_description,
+    packages=['checker'],
+    install_requires=['pyyaml'],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+        "Development Status :: 1 - Planning",
     ],
     python_requires='>=3.6',
 )
