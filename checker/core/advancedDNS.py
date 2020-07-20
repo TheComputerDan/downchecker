@@ -17,7 +17,6 @@ class AdvancedDNS(Site):
         for ip in servers:
             if super().validateIPAddr(ip_addr=ip):
                 self.servers.append(ip)
-        # self.servers = servers
 
     def __repr__(self):
         return "AdvancedDNS(hostname={hostname}, url={url}, servers={servers})".format(
@@ -26,7 +25,7 @@ class AdvancedDNS(Site):
             servers = self.servers
         )
 
-    def __systemDnsInfo(self, *args ,**kwargs) -> SystemDNS:
+    def __platformDNSInfo(self, **kwargs) -> SystemDNS:
         platform_type = str()
 
         if kwargs.get('platform'):
@@ -70,7 +69,7 @@ class AdvancedDNS(Site):
         return list()
 
     def defaultServers(self) -> list:
-        dns_info = self.__systemDnsInfo()
+        dns_info = self.__platformDNSInfo()
         with open(dns_info.location, 'r') as dns_file:
             dns_config = dns_file.readlines()
             

@@ -1,0 +1,41 @@
+---
+sites: 
+  - site: 
+      alias: Google
+      hostname: google.com
+      url: https://google.com
+      protocols: 
+        - https
+  - site: 
+      alias: DoctorDan (Author)
+      hostname: doctordan.dev
+      url: https://doctordan.dev
+      protocols: 
+        - https
+  - site: 
+      alias: DoctorDan (Author)
+      hostname: amazon.com/
+      url: https://amazon.com/
+      protocols: 
+        - https
+dns:
+  - provider:
+      name: Cloudflare
+      servers:
+        - "1.1.1.1"
+        - "1.0.0.1"
+  - provider:
+      name: Google
+      servers:
+        - "8.8.8.8"
+        - "8.8.4.4"
+  - provider:
+      name: OpenDNS Home
+      servers:
+        - "208.67.222.222"
+        - "208.67.220.220"
+  - provider:
+      name: Verisign
+      servers:
+        - "64.6.64.6"
+        - "64.6.65.6"
