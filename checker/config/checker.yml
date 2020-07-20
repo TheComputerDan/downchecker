@@ -13,8 +13,8 @@ sites:
       protocols: 
         - https
   - site: 
-      alias: DoctorDan (Author)
-      hostname: amazon.com/
+      alias: Amazon
+      hostname: amazon.com
       url: https://amazon.com/
       protocols: 
         - https
