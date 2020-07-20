@@ -5,14 +5,14 @@ A quick way to check for down sites using Python
 A tool set to quickly check multiple endpoint statuses.
 
 In Development: 
-    - Web Tools
-    - DNS Tools
+- Web Tools
+- DNS Tools
 
 Planned: 
-    - Custom Service Checking
-    - SSH
-    - FTP
-    - ETC.
+- Custom Service Checking
+- SSH
+- FTP
+- ETC.
 
 Ultimately a tool to quickly check on services that you want to be in a known good state. 
 
