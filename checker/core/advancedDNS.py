@@ -7,23 +7,21 @@ import socket
 from collections import namedtuple
 from checker.core.site import Site
 
+import dns.resolver
+
 SystemDNS = namedtuple('SystemDNS',['platform','location','heading'])
 
 class AdvancedDNS(Site):
-    def __init__(self, hostname: str, url: str, servers: list = list()):
+    def __init__(self, hostname: str, url: str ='', nameservers: list = list()):
         super().__init__(hostname=hostname, url=url)
 
-        self.servers = list()
-        for ip in servers:
+        self.nameservers = list()
+        for ip in nameservers:
             if super().validateIPAddr(ip_addr=ip):
-                self.servers.append(ip)
+                self.nameservers.append(ip)
 
     def __repr__(self):
-        return "AdvancedDNS(hostname={hostname}, url={url}, servers={servers})".format(
-            hostname = self.hostname,
-            url = self.url,
-            servers = self.servers
-        )
+        return f"AdvancedDNS(hostname={self.hostname}, url={self.url}, nameservers={self.nameservers})"
 
     def __platformDNSInfo(self, **kwargs) -> SystemDNS:
         platform_type = str()
@@ -46,7 +44,7 @@ class AdvancedDNS(Site):
             return None
 
         else:
-            raise ValueError("OS [{}] not supported.".format(platform_type))
+            raise ValueError(f"OS [{platform_type}] not supported.")
 
     def __trimConfig_unix(self, dns_config: list) -> list:
         """
@@ -68,7 +66,8 @@ class AdvancedDNS(Site):
     def __trimConfig_win(self, dns_config: list) -> list:
         return list()
 
-    def defaultServers(self) -> list:
+    def systemServers(self) -> list:
+        """ List of system's DNS servers. """
         dns_info = self.__platformDNSInfo()
         with open(dns_info.location, 'r') as dns_file:
             dns_config = dns_file.readlines()
@@ -82,5 +81,18 @@ class AdvancedDNS(Site):
                 return trimmed_config
 
     def getServers(self) -> list:
-        return self.servers
+        return self.nameservers
         
+    def specialRequest(self) -> list:
+        addresses = list()
+
+        resolver = dns.resolver.Resolver()
+        resolver.nameservers = self.nameservers
+
+        answers = resolver.resolve(self.hostname,'a')
+
+        for item in answers:
+            addresses.append(str(item)) 
+            # Using the overleaded str to get only the IP Addresses
+
+        return addresses

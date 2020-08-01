@@ -9,10 +9,7 @@ class Site(object):
         self.protocol = protocols
 
     def __repr__(self):
-        return "Site(hostname={},protocol={})".format(
-            self.hostname,
-            self.protocol
-        )
+        return f"Site(hostname={self.hostname},protocol={self.protocol})"
 
     def __parseProtocol(self, protocol: str) -> int:
         if protocol == "https":
@@ -30,7 +27,7 @@ class Site(object):
         try:
             return ipaddress.ip_address(ip_addr)
         except:
-            print("{} -- is and invalid IP Address ".format(ip_addr))
+            print(f"{ip_addr} is an invalid IP Address")
             return None
         
 

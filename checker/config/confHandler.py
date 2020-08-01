@@ -1,3 +1,5 @@
+from ipaddress import ip_address
+from checker.core.site import Site
 import os
 import sys
 import yaml
@@ -61,6 +63,24 @@ class Config(object):
         elif (platform_type == "win32"):
             print("Windows is not yet supported")
             return None
+
+    def getSystemLocation(self) -> str:
+        return self.__platformConfig().fullpath
+
+    def getDNSServerList(self) -> list:
+        default_dns_servers = self.read().dnsproviders
+        return default_dns_servers
+    
+    def getDNSServerListIPs(self) -> list:
+        ip_addresses = list()
+        default_dns_servers = self.read().dnsproviders
+        for provider in default_dns_servers:
+            ip_addresses.extend(provider.servers)
+        return ip_addresses
+
+    def getSitesList(self) -> list:
+        default_sites_list = self.read().sites
+        return default_sites_list
 
     def read(self) -> ConfigSections:
 

@@ -12,12 +12,6 @@ sites:
       url: https://doctordan.dev
       protocols: 
         - https
-  - site: 
-      alias: Amazon
-      hostname: amazon.com
-      url: https://amazon.com/
-      protocols: 
-        - https
 dns:
   - provider:
       name: Cloudflare
