@@ -11,9 +11,9 @@ def checkArgs(args):
     # Print Default DNS List
     if args.default_dns_list: 
         for provider in conf.getDNSServerList():
-            print(f"* {provider.name}")
+            print(f"» {provider.name}")
             for server in provider.servers:
-                print(f"\t[+] {server}")
+                print(f"\t• {server}")
             print()
 
     # Print Config File
@@ -27,10 +27,10 @@ def checkArgs(args):
                 url=site.url,
                 protocols=site.protocols
             )
-            print(f"* {site.alias}:")
+            print(f"» {site.alias}:")
 
             for ip in s.dnsLookup():
-                print(f"\t[+] {ip}")
+                print(f"\t• {ip}")
 
             print()
     
@@ -55,19 +55,31 @@ def checkArgs(args):
             print(f"Response: {adns.specialRequest()}")
             print()
 
+
 if __name__ == "__main__":
     
     parser = ArgumentParser()
-    info_options = parser.add_argument_group("Info Options")
-    info_options.add_argument("--default-dns-list",action="store_true",help="List all Default DNS Servers configured")
-    info_options.add_argument("--config-location",action="store_true",help="Print Default DNS Servers config location")
-    
-    quick_options = parser.add_argument_group("Quick Options")
-    quick_options.add_argument("--quick-dns-lookup",action="store_true",help="Quick DNS Lookup based on sites defined in config.")
-    quick_options.add_argument("--quick-web-check",action="store_true",help="Quick web check based on sites defined in config.")
 
-    dns_options = parser.add_argument_group("DNS Options")
-    dns_options.add_argument("--dns-search",action="store",nargs='+',type=str,default='',help="Domain name input, returns list of IP addresses")
+    subparser = parser.add_subparsers()
+    dns_subparser = subparser.add_parser('dns', help="DNS Related Commands")
+    dns_subparser.add_argument("-s","--search",action="store",nargs='+',type=str,default='',help="Domain name input, returns list of IP addresses",dest="dns_search")
+
+
+    conf_subparser = subparser.add_parser('config',aliases=['conf'],help="Config Related Commands")
+    conf_subparser.add_argument("--nameservers",action="store_true",help="List all Default DNS Servers configured",dest="default_dns_list")
+    conf_subparser.add_argument("--location",action="store_true",help="Print Default DNS Servers config location",dest="config_location")
+
+
+    quick_options = parser.add_argument_group("Quick Options")
+    quick_options.add_argument("--quick-dns-lookup",action="store_true",default=False,help="Quick DNS Lookup based on sites defined in config.")
+    quick_options.add_argument("--quick-web-check",action="store_true",default=False,help="Quick web check based on sites defined in config.")
+
+
+    parser.set_defaults(
+        dns_search=False,
+        default_dns_list=False,
+        config_location=False
+    )
 
     args = parser.parse_args()
 
