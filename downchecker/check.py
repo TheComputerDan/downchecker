@@ -1,15 +1,16 @@
 from requests import status_codes
-from checker.core.site import Site
-from checker.core.advancedDNS import AdvancedDNS
-from checker.config.confHandler import Config
+from downchecker.core.site import Site
+from downchecker.core.advancedDNS import AdvancedDNS
+from downchecker.config.confHandler import Config
 
 from argparse import ArgumentParser
 
-def checkArgs(args):
-    conf = Config()    
+
+def check_args(args):
+    conf = Config()
 
     # Print Default DNS List
-    if args.default_dns_list: 
+    if args.default_dns_list:
         for provider in conf.getDNSServerList():
             print(f"» {provider.name}")
             for server in provider.servers:
@@ -29,11 +30,11 @@ def checkArgs(args):
             )
             print(f"» {site.alias}:")
 
-            for ip in s.dnsLookup():
+            for ip in s.dns_lookup():
                 print(f"\t• {ip}")
 
             print()
-    
+
     if args.quick_web_check:
         for site in conf.getSitesList():
             s = Site(
@@ -42,7 +43,7 @@ def checkArgs(args):
                 protocols=site.protocols
             )
             print(f"» {site.alias}:")
-            print(f"\t • Status Code: {s.webCheck()}")
+            print(f"\t • Status Code: {s.web_check()}")
             print()
 
     if args.dns_search:
@@ -50,30 +51,31 @@ def checkArgs(args):
         nameservers = conf.getDNSServerListIPs()
         print(f"Using Nameserver(s): {nameservers}\n")
         for domain in args.dns_search:
-            adns = AdvancedDNS(hostname=domain,nameservers=nameservers)
+            adns = AdvancedDNS(hostname=domain, nameservers=nameservers)
             print(f"Domain: {domain}")
-            print(f"Response: {adns.specialRequest()}")
+            print(f"Response: {adns.special_request()}")
             print()
 
 
 if __name__ == "__main__":
-    
     parser = ArgumentParser()
 
     subparser = parser.add_subparsers()
     dns_subparser = subparser.add_parser('dns', help="DNS Related Commands")
-    dns_subparser.add_argument("-s","--search",action="store",nargs='+',type=str,default='',help="Domain name input, returns list of IP addresses",dest="dns_search")
+    dns_subparser.add_argument("-s", "--search", action="store", nargs='+', type=str, default='',
+                               help="Domain name input, returns list of IP addresses", dest="dns_search")
 
-
-    conf_subparser = subparser.add_parser('config',aliases=['conf'],help="Config Related Commands")
-    conf_subparser.add_argument("--nameservers",action="store_true",help="List all Default DNS Servers configured",dest="default_dns_list")
-    conf_subparser.add_argument("--location",action="store_true",help="Print Default DNS Servers config location",dest="config_location")
-
+    conf_subparser = subparser.add_parser('config', aliases=['conf'], help="Config Related Commands")
+    conf_subparser.add_argument("--nameservers", action="store_true", help="List all Default DNS Servers configured",
+                                dest="default_dns_list")
+    conf_subparser.add_argument("--location", action="store_true", help="Print Default DNS Servers config location",
+                                dest="config_location")
 
     quick_options = parser.add_argument_group("Quick Options")
-    quick_options.add_argument("--quick-dns-lookup",action="store_true",default=False,help="Quick DNS Lookup based on sites defined in config.")
-    quick_options.add_argument("--quick-web-check",action="store_true",default=False,help="Quick web check based on sites defined in config.")
-
+    quick_options.add_argument("--quick-dns-lookup", action="store_true", default=False,
+                               help="Quick DNS Lookup based on sites defined in config.")
+    quick_options.add_argument("--quick-web-check", action="store_true", default=False,
+                               help="Quick web check based on sites defined in config.")
 
     parser.set_defaults(
         dns_search=False,
@@ -83,4 +85,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    checkArgs(args)
+    check_args(args)

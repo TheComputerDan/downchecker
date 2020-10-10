@@ -1,16 +1,17 @@
 from ipaddress import ip_address
-from checker.core.site import Site
+from downchecker.core.site import Site
 import os
 import sys
 import yaml
 from collections import namedtuple
 from pathlib import Path
 
-ConfFile = namedtuple('ConfFile',['directories','fullpath'])
-ConfigSections = namedtuple('ConfigSections',['sites','dnsproviders'])
+ConfFile = namedtuple('ConfFile', ['directories', 'fullpath'])
+ConfigSections = namedtuple('ConfigSections', ['sites', 'dnsproviders'])
 # TODO Consider a different Name
-SITE = namedtuple('SITE',['alias','hostname','url','protocols'])
-PROVIDER = namedtuple('PROVIDER',['name','servers'])
+SITE = namedtuple('SITE', ['alias', 'hostname', 'url', 'protocols'])
+PROVIDER = namedtuple('PROVIDER', ['name', 'servers'])
+
 
 class Config(object):
     def __init__(self, file: str = str()):
@@ -19,7 +20,7 @@ class Config(object):
         self.__initialize()
 
     def __initialize(self):
-        platform_config_info = self.__platformConfig()
+        platform_config_info = self.__platform_config()
         dirs = Path(platform_config_info.directories)
         cfg_file = Path(platform_config_info.fullpath)
 
@@ -29,7 +30,7 @@ class Config(object):
         if not cfg_file.exists():
             cfg_file.touch(mode=0o644)
 
-            base_config = Path(self.cwd + "/checker.yml")
+            base_config = Path(self.cwd + "/downchecker.yml")
             base_contents = list()
 
             with open(base_config,'r') as base:
@@ -38,7 +39,8 @@ class Config(object):
             with open(cfg_file, 'a') as conf_file:
                 conf_file.writelines(base_contents)
 
-    def __platformConfig(self, **kwargs) -> ConfFile:
+    @staticmethod
+    def __platform_config(**kwargs) -> ConfFile:
         platform_type = str()
 
         if kwargs.get('platform'):
@@ -46,26 +48,26 @@ class Config(object):
         else:
             platform_type = sys.platform
 
-        if (platform_type == "darwin"):
+        if platform_type == "darwin":
             darwin_config = ConfFile(
                 str(Path.home()) + "/.config/downchecker/",
-                str(Path.home()) + "/.config/downchecker/checker.yml"
+                str(Path.home()) + "/.config/downchecker/downchecker.yml"
             )
             return darwin_config
 
-        elif (platform_type == "linux"):
+        elif platform_type == "linux":
             linux_config = ConfFile(
                 str(Path.home()) + "/.config/downchecker/",
-                str(Path.home()) + "/.config/downchecker/checker.yml"
+                str(Path.home()) + "/.config/downchecker/downchecker.yml"
             )
             return linux_config
 
-        elif (platform_type == "win32"):
+        elif platform_type == "win32":
             print("Windows is not yet supported")
             return None
 
     def getSystemLocation(self) -> str:
-        return self.__platformConfig().fullpath
+        return self.__platform_config().fullpath
 
     def getDNSServerList(self) -> list:
         default_dns_servers = self.read().dnsproviders
@@ -84,7 +86,7 @@ class Config(object):
 
     def read(self) -> ConfigSections:
 
-        conf = self.__platformConfig()
+        conf = self.__platform_config()
 
         sites_list = list() 
         dns_list = list() 
