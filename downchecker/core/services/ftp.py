@@ -20,7 +20,7 @@ class FTP(object):
                 return True
             else:
                 return False
-        except ConnectionRefusedError as ex:
+        except Exception:
             return False
         finally:
             s.close()

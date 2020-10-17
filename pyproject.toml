@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "downchecker"
+version = "0.1.0"
+description = ""
+authors = ["TheComputerDan"]
+license = "MIT"
+readme = "README.md"
+classifiers = [
+        "Programming Language :: Python :: 3",
+        "Development Status :: 1 - Planning",
+]
+packages = [
+    { include = "downchecker" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+requests = "^2.24.0"
+paramiko = "^2.7.2"
+PyYAML = "^5.3.1"
+dnspython = "^2.0.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+downcheck = 'downchecker.bin.downcheck:main'

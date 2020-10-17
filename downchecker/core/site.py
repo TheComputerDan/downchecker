@@ -7,6 +7,7 @@ import urllib3
 from urllib3.exceptions import InsecureRequestWarning
 import warnings
 
+
 class Site(object):
     def __init__(self, hostname: str, url: str, protocols: list = ['https'], verify: bool = True, **kwargs):
         self.hostname = hostname
@@ -25,7 +26,7 @@ class Site(object):
         return f"Site(hostname={self.hostname},protocol={self.protocol},verify={self.verify})"
 
     @staticmethod
-    def __parse_protocol(protocol: str) -> Optional[int]:
+    def _parse_protocol(protocol: str) -> Optional[int]:
         if protocol == "https":
             return 443
         elif protocol == "http":
@@ -50,7 +51,7 @@ class Site(object):
             ip_list = list()
             for protocol in self.protocol:
                 if not self.port:
-                    self.port = self.__parse_protocol(protocol=protocol)
+                    self.port = self._parse_protocol(protocol=protocol)
                 resp = socket.getaddrinfo(host=self.hostname, port=self.port)
                 for item in resp:
                     ip_list.append(item[4][0])

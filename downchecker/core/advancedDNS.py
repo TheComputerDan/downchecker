@@ -1,14 +1,10 @@
+from downchecker.core.site import Site
+from collections import namedtuple
 from ipaddress import ip_address
-from sys import platform
 from typing import Optional
-
+import dns.resolver
 import dns
 import sys
-import socket
-from collections import namedtuple
-from downchecker.core.site import Site
-
-import dns.resolver
 
 SystemDNS = namedtuple('SystemDNS', ['platform', 'location', 'heading'])
 
@@ -26,9 +22,7 @@ class AdvancedDNS(Site):
         return f"AdvancedDNS(hostname={self.hostname}, url={self.url}, nameservers={self.nameservers})"
 
     @staticmethod
-    def __platform_dns_info(**kwargs) -> Optional[SystemDNS]:
-        # platform_type = str()
-
+    def _platform_dns_info(**kwargs) -> Optional[SystemDNS]:
         if kwargs.get('platform'):
             platform_type = kwargs.get('platform')
         else:
@@ -49,10 +43,7 @@ class AdvancedDNS(Site):
         else:
             raise ValueError(f"OS [{platform_type}] not supported.")
 
-    def __trim_config_unix(self, dns_config: list) -> list:
-        """
-
-        """
+    def _trim_config_unix(self, dns_config: list) -> list:
         nameservers = list()
         for line in dns_config:
             if line.startswith("#") or not line.startswith("nameserver"):
@@ -67,22 +58,36 @@ class AdvancedDNS(Site):
         return nameservers
 
     @staticmethod
-    def __trim_config_win(dns_config: list) -> list:
+    def _trim_config_win(dns_config: list) -> list:
         print(f"Placeholder {dns_config}")
         return list()
 
+    def is_private(self):
+        bool_array = [ip_address(ip).is_private for ip in self.dns_lookup()]
+        if False in bool_array:
+            return False
+        else:
+            return True
+
+    def is_public(self):
+        bool_array = [ip_address(ip).is_private for ip in self.dns_lookup()]
+        if True in bool_array:
+            return False
+        else:
+            return True
+
     def system_servers(self) -> list:
         """ List of system's DNS servers. """
-        dns_info = self.__platform_dns_info()
+        dns_info = self._platform_dns_info()
         with open(dns_info.location, 'r') as dns_file:
             dns_config = dns_file.readlines()
 
             if (dns_info.platform == "darwin") or (dns_info.platform == "linux"):
-                trimmed_config = self.__trim_config_unix(dns_config)
+                trimmed_config = self._trim_config_unix(dns_config)
                 return trimmed_config
 
             elif dns_info.platform == "win32":
-                trimmed_config = self.__trim_config_win(dns_config)
+                trimmed_config = self._trim_config_win(dns_config)
                 return trimmed_config
 
     def get_servers(self) -> list:

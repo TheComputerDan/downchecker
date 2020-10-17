@@ -9,6 +9,7 @@ venv/
 downchecker.egg-info/
 *.ipynb
 .ipynb_*
+dist/
 
 # Development Dotfiles
 .pydev
